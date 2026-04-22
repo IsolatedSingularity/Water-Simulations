@@ -54,12 +54,12 @@ def runStaticAnalysis() -> None:
     )
     fig.suptitle(
         "SPH vs Stable Fluids · 50 steps",
-        color=FG_PRIMARY, fontsize=14, y=0.985,
+        color=FG_PRIMARY, fontsize=14, y=0.995,
         fontweight="regular",
     )
     fig.text(
-        0.5, 0.945,
-        "Lagrangian particle field (top) compared with Eulerian grid solve (bottom)",
+        0.5, 0.955,
+        "Lagrangian particles (top) vs Eulerian grid (bottom)",
         ha="center", color=FG_SECONDARY, fontsize=9.5,
     )
     addFooter(fig)
@@ -70,7 +70,7 @@ def runStaticAnalysis() -> None:
     for col, (field, label) in enumerate(zip(FIELDS, FIELD_LABELS)):
         cmap = PALETTES["diverging"] if field == "divergence" else PALETTES["sequential"]
         axes[0, col].text(
-            0.5, 1.06, label,
+            0.5, 1.04, label,
             transform=axes[0, col].transAxes,
             ha="center", va="bottom",
             color=FG_PRIMARY, fontsize=11,
@@ -98,7 +98,7 @@ def runStaticAnalysis() -> None:
             color=FG_SECONDARY, fontsize=11, rotation=90,
         )
 
-    fig.subplots_adjust(left=0.05, right=0.99, top=0.90, bottom=0.04)
-    fig.savefig(OUTPUT, dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())
+    fig.subplots_adjust(left=0.05, right=0.99, top=0.86, bottom=0.04)
+    fig.savefig(OUTPUT, dpi=150, facecolor=fig.get_facecolor())
     plt.close(fig)
     print(f"Saved: {OUTPUT}")

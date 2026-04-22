@@ -63,13 +63,13 @@ def runSwirl() -> None:
     )
     ax.set_title(
         "Two-Source Swirl",
-        color=FG_PRIMARY, fontsize=14, pad=8, loc="left", x=0.02,
+        color=FG_PRIMARY, fontsize=14, pad=18, loc="left", x=0.02,
     )
     ax.text(
-        0.98, 1.02,
+        0.02, 1.02,
         "Stable Fluids · counter-rotating dye sources",
         transform=ax.transAxes,
-        color=FG_SECONDARY, fontsize=9, ha="right", va="bottom",
+        color=FG_SECONDARY, fontsize=9, ha="left", va="bottom",
     )
     ax.axis("off")
 

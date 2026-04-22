@@ -39,7 +39,7 @@ OBSTACLE_X = SIZE // 4
 # Display crop: tight band around cylinder for wind-tunnel aspect
 CROP_HEIGHT = 80
 
-FRAMES = 240
+FRAMES = 220
 FPS = 30
 OUTPUT = os.path.join(PLOT_DIR, "vortex_street.gif")
 
@@ -156,4 +156,4 @@ def runKarmanStreet() -> None:
             print(f"  Karman: frame {frame}/{FRAMES}")
         return [im]
 
-    saveAnimation(fig, update, FRAMES, FPS, OUTPUT, dpi=72)
+    saveAnimation(fig, update, FRAMES, FPS, OUTPUT, dpi=130)
