@@ -71,7 +71,7 @@ def runDamBreak() -> None:
 
     trail: list[np.ndarray] = []
     trailScatters: list = []
-    HOLD_FRAMES = 20  # initial pause showing the dam at rest
+    HOLD_FRAMES = 25  # initial pause showing the dam at rest
 
     def update(frame: int) -> list:
         nonlocal trail, trailScatters

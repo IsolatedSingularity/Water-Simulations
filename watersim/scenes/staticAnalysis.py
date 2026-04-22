@@ -19,7 +19,7 @@ from watersim.viz.theme import (
 from watersim.viz.animator import ensurePlotDir, PLOT_DIR
 
 
-SIMULATION_STEPS = 150
+SIMULATION_STEPS = 300
 N_PER_ROW = 30   # ~1800 particles
 OUTPUT = os.path.join(PLOT_DIR, "static_comparison.png")
 FIELDS = ("density", "pressure", "divergence", "speed")
@@ -53,7 +53,7 @@ def runStaticAnalysis() -> None:
         gridspec_kw={"hspace": 0.20, "wspace": 0.05},
     )
     fig.suptitle(
-        "SPH vs Stable Fluids · 150 steps",
+        "SPH vs Stable Fluids · 300 steps",
         color=FG_PRIMARY, fontsize=14, y=0.99,
         fontweight="regular",
     )

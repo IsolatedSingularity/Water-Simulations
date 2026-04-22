@@ -121,45 +121,69 @@ Plots/            Generated GIFs and PNGs
 
 <br>
 
-All three solvers model an incompressible Newtonian fluid in two dimensions. The governing equations are the incompressible Navier-Stokes system:
+All three solvers model an incompressible Newtonian fluid in two dimensions. Incompressible means the fluid cannot be squeezed; Newtonian means its viscosity (resistance to shear) does not change with how fast it is being deformed. The governing equations are the incompressible Navier-Stokes system:
+
+<p align="center">
 
 $$\frac{\partial \mathbf{u}}{\partial t} + (\mathbf{u} \cdot \nabla)\mathbf{u} = -\frac{\nabla p}{\rho} + \nu \nabla^2 \mathbf{u} + \mathbf{f}, \qquad \nabla \cdot \mathbf{u} = 0.$$
 
-The first equation is Newton's second law for a fluid parcel: inertia and convective acceleration on the left, pressure gradient, viscous diffusion, and body forces on the right. The second is the incompressibility constraint, which forces the velocity field to be divergence-free everywhere.
+</p>
+
+The first equation is just Newton's second law $F = ma$ written for a small parcel of fluid: inertia and convective acceleration on the left, pressure gradient, viscous diffusion, and body forces on the right. The second is the incompressibility constraint, which forces the velocity field to be divergence-free everywhere (no fluid magically appearing or disappearing in any region).
 
 ### Pressure Projection
 
-The hard part of incompressible simulation is enforcing $\nabla \cdot \mathbf{u} = 0$ at every step. The standard approach uses the Helmholtz decomposition: any vector field $\mathbf{w}$ can be split uniquely into a divergence-free part and a gradient,
+The trickiest part of incompressible simulation is enforcing $\nabla \cdot \mathbf{u} = 0$ at every step, since the advection and force updates do not respect it on their own. The standard fix uses the Helmholtz decomposition: any vector field $\mathbf{w}$ can be split uniquely into a divergence-free part and a gradient,
+
+<p align="center">
 
 $$\mathbf{w} = \mathbf{u} + \nabla p.$$
+
+</p>
 
 Taking the divergence and using $\nabla \cdot \mathbf{u} = 0$ gives the Poisson equation $\nabla^2 p = \nabla \cdot \mathbf{w}$. Solving for $p$ (here by Gauss-Seidel relaxation) and subtracting $\nabla p$ from $\mathbf{w}$ yields the projected, divergence-free velocity. This is the projection step in both `StableFluidsSolver` and `HybridSolver`.
 
 ### Stable Fluids (Eulerian)
 
-Stam's contribution was a semi-Lagrangian advection scheme that is unconditionally stable. Rather than pushing fluid forward, each grid cell is traced backward along the velocity field:
+Eulerian solvers track the fluid on a fixed grid and ask, at each cell, what the velocity and density are right now. Stam's contribution was a semi-Lagrangian advection scheme that is unconditionally stable: rather than pushing fluid forward, each grid cell is traced backward along the velocity field,
+
+<p align="center">
 
 $$\phi^{n+1}(\mathbf{x}) = \phi^n\bigl(\mathbf{x} - \mathbf{u}\,\Delta t\bigr).$$
+
+</p>
 
 The new value at $\mathbf{x}$ is the old value at the back-traced position, sampled by bilinear interpolation. This removes the CFL constraint and allows large timesteps. The cost is first-order accuracy and noticeable numerical dissipation, which is why vortical structures decay over long runs.
 
 ### SPH (Lagrangian)
 
-SPH replaces the continuum with a set of particles, each carrying mass, position, velocity, and pressure. Any field $A$ can be reconstructed at any point by a kernel-weighted sum over neighbours:
+Lagrangian solvers throw away the grid entirely and represent the fluid as a swarm of particles. Each particle carries mass, position, velocity, and pressure, and any continuous field $A$ can be reconstructed at any point by a kernel-weighted sum over neighbours:
+
+<p align="center">
 
 $$A(\mathbf{r}) = \sum_j \frac{m_j}{\rho_j} A_j \, W(|\mathbf{r} - \mathbf{r}_j|, h).$$
 
+</p>
+
 The Poly6 kernel is used for density estimation,
 
+<p align="center">
+
 $$W_{\mathrm{poly6}}(r^2, h) = \frac{315}{64\pi h^9}(h^2 - r^2)^3,$$
+
+</p>
 
 and the gradient of the Spiky kernel is used for pressure forces because its non-zero gradient at $r = 0$ prevents particle clumping. Pressure is closed by a Tait equation of state $p_i = k(\rho_i - \rho_0)$. Neighbour queries use `scipy.spatial.cKDTree` for $\mathcal{O}(N \log N)$ lookup.
 
 ### PIC/FLIP (Hybrid)
 
-Pure Lagrangian methods handle free surfaces naturally but struggle with incompressibility; pure Eulerian methods enforce incompressibility cheaply but suffer advective diffusion. PIC/FLIP keeps particles as the primary representation but borrows the grid only for the projection step. The FLIP update transmits the *change* in grid velocity back to the particles,
+Neither pure approach is ideal: Lagrangian methods handle free surfaces (water-air interfaces) naturally but struggle to enforce incompressibility, while Eulerian methods enforce incompressibility cheaply but smear out fine detail through advective diffusion. PIC/FLIP keeps particles as the primary representation but borrows the grid only for the projection step. The FLIP update transmits the *change* in grid velocity back to the particles,
+
+<p align="center">
 
 $$v_p^{n+1} = \alpha (v_p^n + \Delta v_g) + (1 - \alpha)\, v_g^{n+1},$$
+
+</p>
 
 so $\alpha = 0.95$ gives 95% FLIP (energetic, detail-preserving) blended with 5% PIC (damping, stabilising). The P2G scatter uses `np.add.at` for vectorised bilinear accumulation on a staggered MAC grid.
 

@@ -20,8 +20,8 @@ from watersim.viz.animator import saveAnimation, ensurePlotDir, PLOT_DIR
 GRID_SIZE = 192
 FRAMES = 130
 FPS = 30
-DENSITY_AMOUNT = 140.0
-FORCE_SCALE = 4.0
+DENSITY_AMOUNT = 175.0
+FORCE_SCALE = 4.6
 ORBIT_RADIUS_FRAC = 0.22
 OUTPUT = os.path.join(PLOT_DIR, "saved_simulation.gif")
 
