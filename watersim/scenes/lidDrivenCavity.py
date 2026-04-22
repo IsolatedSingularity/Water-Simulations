@@ -24,7 +24,7 @@ SIZE = 192
 LID_VELOCITY = 1.0
 VISCOSITY = 0.005
 FRAMES = 200
-FPS = 30
+FPS = 20
 OUTPUT = os.path.join(PLOT_DIR, "lid_driven_cavity.gif")
 
 RE = LID_VELOCITY * SIZE / VISCOSITY
@@ -38,6 +38,12 @@ def runLidDrivenCavity() -> None:
     solver = StableFluidsSolver(
         size=SIZE, visc=VISCOSITY, topWallVelocity=LID_VELOCITY,
     )
+
+    # Pre-warm so the recording starts after the primary vortex and corner
+    # structures have already developed; otherwise the first ~half of the
+    # animation is just the lid streak with no recirculation.
+    for _ in range(100):
+        solver.step()
 
     fig, ax = plt.subplots(figsize=(5.6, 5.6))
     fig.subplots_adjust(left=0.04, right=0.96, top=0.90, bottom=0.04)

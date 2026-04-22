@@ -117,7 +117,7 @@ Plots/            Generated GIFs and PNGs
 ---
 
 <details>
-<summary><b>Theory</b></summary>
+<summary><b>Governing Equations and Solver Theory</b></summary>
 
 <br>
 
@@ -189,8 +189,8 @@ so $\alpha = 0.95$ gives 95% FLIP (energetic, detail-preserving) blended with 5%
 > [!TIP]
 > **Differentiable simulation via JAX.** Re-implementing the solvers in JAX would make every step differentiable end-to-end, which opens up gradient-based fluid control, inverse design of obstacles for a target wake, and learned closure models trained directly against the simulator.
 
-1. **Higher-order advection (BFECC).** Replace the first-order semi-Lagrangian advection in `StableFluidsSolver` with a Back and Forth Error Compensation and Correction step or MacCormack scheme. This is a self-contained change in the `_advect` method and would visibly sharpen all of the Eulerian scenes by recovering the small-scale vorticity that currently decays.
+- [ ] **Higher-order advection (BFECC).** Replace the first-order semi-Lagrangian advection in `StableFluidsSolver` with a Back and Forth Error Compensation and Correction step or MacCormack scheme. This is a self-contained change in the `_advect` method and would visibly sharpen all of the Eulerian scenes by recovering the small-scale vorticity that currently decays.
 
-2. **Multigrid pressure solve.** Swap the 20-iteration Gauss-Seidel projection for a multigrid V-cycle. Per-timestep convergence would jump by roughly an order of magnitude, which would lift the practical Reynolds-number ceiling for the lid-driven cavity and tighten the incompressibility constraint $\nabla \cdot \mathbf{u} = 0$ everywhere.
+- [ ] **Multigrid pressure solve.** Swap the 20-iteration Gauss-Seidel projection for a multigrid V-cycle. Per-timestep convergence would jump by roughly an order of magnitude, which would lift the practical Reynolds-number ceiling for the lid-driven cavity and tighten the incompressibility constraint $\nabla \cdot \mathbf{u} = 0$ everywhere.
 
-3. **Surface tension and viscosity for SPH.** Add a Müller-style surface-tension term plus a proper artificial-viscosity model so the SPH solver can handle droplet and splash scenes where it currently underperforms PIC/FLIP.
+- [ ] **Surface tension and viscosity for SPH.** Add a Müller-style surface-tension term plus a proper artificial-viscosity model so the SPH solver can handle droplet and splash scenes where it currently underperforms PIC/FLIP.

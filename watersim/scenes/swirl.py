@@ -66,7 +66,7 @@ def runSwirl() -> None:
         color=FG_PRIMARY, fontsize=14, pad=18, loc="left", x=0.02,
     )
     ax.text(
-        0.02, 1.02,
+        0.02, 0.985,
         "Stable Fluids · counter-rotating dye sources",
         transform=ax.transAxes,
         color=FG_SECONDARY, fontsize=9, ha="left", va="bottom",

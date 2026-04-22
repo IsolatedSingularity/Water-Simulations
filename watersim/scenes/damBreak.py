@@ -23,7 +23,7 @@ from watersim.viz.animator import saveAnimation, ensurePlotDir, PLOT_DIR
 GRID_WIDTH = 192
 GRID_HEIGHT = 96
 N_PER_ROW = 50
-FRAMES = 320
+FRAMES = 340
 FPS = 30
 OUTPUT = os.path.join(PLOT_DIR, "hybrid_simulation.gif")
 
@@ -71,11 +71,13 @@ def runDamBreak() -> None:
 
     trail: list[np.ndarray] = []
     trailScatters: list = []
+    HOLD_FRAMES = 20  # initial pause showing the dam at rest
 
     def update(frame: int) -> list:
         nonlocal trail, trailScatters
 
-        solver.step()
+        if frame >= HOLD_FRAMES:
+            solver.step()
         pos = solver.getParticlePositions()
         speeds = solver.getParticleSpeeds() + 1.0
 
