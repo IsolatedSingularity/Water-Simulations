@@ -21,8 +21,8 @@ from watersim.viz.animator import saveAnimation, ensurePlotDir, PLOT_DIR
 
 
 WIDTH = 192
-HEIGHT = 384
-FRAMES = 270
+HEIGHT = 280
+FRAMES = 240
 FPS = 30
 OUTPUT = os.path.join(PLOT_DIR, "rayleigh_taylor.gif")
 
@@ -125,7 +125,7 @@ def runRayleighTaylor() -> None:
     scalar0 = _initScalar(WIDTH, HEIGHT)
     solver = _RTSolver(WIDTH, HEIGHT, scalar0)
 
-    fig, ax = plt.subplots(figsize=(3.4, 5.4))
+    fig, ax = plt.subplots(figsize=(3.6, 5.2))
     fig.subplots_adjust(left=0.03, right=0.97, top=0.92, bottom=0.04)
     addFooter(fig)
 

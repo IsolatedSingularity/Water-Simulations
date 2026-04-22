@@ -17,8 +17,8 @@ from watersim.viz.theme import (
 from watersim.viz.animator import saveAnimation, ensurePlotDir, PLOT_DIR
 
 
-GRID_SIZE = 128
-FRAMES = 170
+GRID_SIZE = 192
+FRAMES = 130
 FPS = 30
 DENSITY_AMOUNT = 140.0
 FORCE_SCALE = 4.0
@@ -126,4 +126,4 @@ def runSwirl() -> None:
             print(f"  Swirl: frame {frame}/{FRAMES}")
         return [im, vortIm]
 
-    saveAnimation(fig, update, FRAMES, FPS, OUTPUT, dpi=72)
+    saveAnimation(fig, update, FRAMES, FPS, OUTPUT, dpi=92)

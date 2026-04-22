@@ -65,12 +65,13 @@ def runLidDrivenCavity() -> None:
     )
     ax.axis("off")
 
-    streamArtists: list = []
+    streamLines = None
+    streamArrows: list = []
     xs = np.linspace(0, SIZE - 1, SIZE)
     ys = np.linspace(0, SIZE - 1, SIZE)
 
     def update(frame: int) -> list:
-        nonlocal streamArtists
+        nonlocal streamLines, streamArrows
 
         for _ in range(2):
             solver.step()
@@ -79,28 +80,37 @@ def runLidDrivenCavity() -> None:
         im.set_data(speed)
         im.set_clim(0, max(float(speed.max()), 1e-6))
 
-        if frame % 30 == 0:
-            for artist in streamArtists:
-                try:
-                    artist.remove()
-                except Exception:
-                    pass
-            streamArtists.clear()
+        # Tear down previous streamlines (lines + arrow patches)
+        if streamLines is not None:
             try:
-                ax.streamplot(
-                    xs, ys,
-                    solver.u.T, solver.v.T,
-                    density=1.4, linewidth=0.55,
-                    color=FG_PRIMARY, arrowsize=0.7, zorder=5,
-                )
-                for col in ax.collections[-2:]:
-                    col.set_alpha(0.55)
-                    streamArtists.append(col)
+                streamLines.lines.remove()
             except Exception:
                 pass
+        for arrow in streamArrows:
+            try:
+                arrow.remove()
+            except Exception:
+                pass
+        streamArrows = []
+
+        try:
+            streamLines = ax.streamplot(
+                xs, ys,
+                solver.u.T, solver.v.T,
+                density=1.1, linewidth=0.55,
+                color=FG_PRIMARY, arrowsize=0.8, zorder=5,
+            )
+            streamLines.lines.set_alpha(0.6)
+            # Collect any FancyArrowPatch instances added this frame
+            for patch in ax.patches:
+                if patch not in streamArrows and patch.__class__.__name__ == "FancyArrowPatch":
+                    streamArrows.append(patch)
+                    patch.set_alpha(0.6)
+        except Exception:
+            streamLines = None
 
         if frame % 60 == 0:
             print(f"  LidCavity: frame {frame}/{FRAMES}")
-        return [im] + streamArtists
+        return [im, streamLines.lines if streamLines else im] + streamArrows
 
-    saveAnimation(fig, update, FRAMES, FPS, OUTPUT, dpi=70)
+    saveAnimation(fig, update, FRAMES, FPS, OUTPUT, dpi=80)

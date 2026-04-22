@@ -27,19 +27,19 @@ from watersim.viz.animator import saveAnimation, ensurePlotDir, PLOT_DIR
 
 
 # Scene parameters tuned for visible periodic shedding
-SIZE = 192
+SIZE = 256
 INFLOW_VELOCITY = 2.0
 DYE_AMOUNT = 80.0
 VISCOSITY = 5e-4
 DT = 0.02
 SUBSTEPS = 4
-OBSTACLE_RADIUS = 12          # diameter D = 24 cells (visible from a distance)
+OBSTACLE_RADIUS = 16          # diameter D = 32 cells (visible from a distance)
 OBSTACLE_X = SIZE // 4
 
 # Display crop: tight band around cylinder for wind-tunnel aspect
-CROP_HEIGHT = 80
+CROP_HEIGHT = 108
 
-FRAMES = 220
+FRAMES = 200
 FPS = 30
 OUTPUT = os.path.join(PLOT_DIR, "vortex_street.gif")
 

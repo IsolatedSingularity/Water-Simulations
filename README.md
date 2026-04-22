@@ -24,7 +24,7 @@ The colour field is a composite of dye concentration multiplied by the local sig
   <img src="Plots/saved_simulation.gif" alt="Two-Source Swirl" width="500">
 </p>
 
-Two density sources are injected at orbiting positions while opposite-sign vortical force pulses are applied at separate locations. The flow is purely passive: there is no obstacle, no gravity, and no boundary forcing. What you should see is two trailing density plumes that wrap around each other in a spiral, with the spiral arms eventually fragmenting into smaller filaments as the vorticity field stretches and folds the dye. This is a clean illustration of how a divergence-free velocity field reorganises a passive scalar without changing its integral over the domain.
+Two density sources are injected at orbiting positions while opposite-sign vortical force pulses are applied at separate locations. The flow is purely passive: there is no obstacle, no gravity, and no boundary forcing. What you should see is two trailing density plumes that wrap around each other in a spiral, with the spiral arms eventually fragmenting into smaller filaments as the vorticity field $\omega = \nabla \times \mathbf{u}$ stretches and folds the dye. This is a clean illustration of how a divergence-free velocity field reorganises a passive scalar without changing its integral $\int \rho \, dA$ over the domain.
 
 This scene is a stress test for the Stable Fluids advection scheme. Semi-Lagrangian advection is unconditionally stable but only first-order accurate, so over many timesteps it artificially diffuses fine-scale structure: the spiral filaments would be sharper under a higher-order scheme. The cyan-to-magenta diverging colormap is centred on the background, so positive density (the injected dye) brightens toward cyan while small negative numerical artifacts pull toward magenta and stay visually subdued. The 128-cell grid keeps the run fast enough to iterate on the source kinematics interactively.
 
@@ -34,7 +34,7 @@ This scene is a stress test for the Stable Fluids advection scheme. Semi-Lagrang
   <img src="Plots/hybrid_simulation.gif" alt="PIC/FLIP Dam Break" width="800">
 </p>
 
-A column of fluid is released against the left wall of a long basin and allowed to collapse under gravity. The expected behaviour, validated against the Martin and Moyce 1952 dam-break experiment, is a leading edge that races along the floor at roughly $\sqrt{2gH}$, a return wave that climbs the right wall and folds back, and eventually a turbulent slosh that fills most of the basin. Free-surface dynamics like this are exactly the regime where pure Eulerian methods struggle: tracking the air-water interface on a fixed grid requires either a level set or a volume-of-fluid scheme, both of which add complexity and dissipation.
+A column of fluid is released against the left wall of a long basin and allowed to collapse under gravity. The expected behaviour, validated against the Martin and Moyce 1952 dam-break experiment, is a leading edge that races along the floor at roughly $u_{\mathrm{front}} \approx \sqrt{2gH}$, a return wave that climbs the right wall and folds back, and eventually a turbulent slosh that fills most of the basin. Free-surface dynamics like this are exactly the regime where pure Eulerian methods struggle: tracking the air-water interface on a fixed grid requires either a level set or a volume-of-fluid scheme, both of which add complexity and dissipation.
 
 The hybrid PIC/FLIP solver sidesteps the interface-tracking problem entirely. Each particle carries a velocity, particles are scattered to a background MAC grid (P2G), the grid enforces incompressibility through pressure projection, then the corrected velocity field is interpolated back to the particles (G2P). The FLIP update transmits only the *change* in grid velocity back to the particles, which preserves the small-scale kinetic energy that would otherwise be lost to advective diffusion. Pure FLIP is unstable in the long run, so the solver here is run at $\alpha = 0.95$, meaning 95% FLIP blended with 5% PIC for damping. Particles are rendered as small filled markers with a short fading trail to make the bulk motion readable.
 
@@ -56,7 +56,7 @@ The interface here is seeded with a sum of three sinusoidal modes (wavenumbers 3
 
 A square cavity has a no-slip floor and side walls; the top wall slides at a constant velocity $U$. The lid drags fluid along with it, that fluid is deflected by the right wall, descends, returns along the bottom, and rises along the left wall, producing a single dominant primary vortex that fills the cavity. At higher Reynolds numbers, secondary Moffatt eddies appear in the bottom corners and a tertiary structure develops in the upper-left corner. The Ghia, Ghia and Shin 1982 paper publishes reference velocity profiles along the vertical and horizontal centrelines for a range of Reynolds numbers, and these have been the canonical incompressible-solver benchmark for forty years.
 
-The colour field is the speed magnitude $|\mathbf{u}|$ on a sequential dark-to-cyan colormap, with streamlines redrawn every thirty frames to keep the animation file size reasonable. The streamlines make the primary vortex centre and the secondary corner structures visible without obscuring the speed field underneath. The simulation is Stable Fluids at $Re = UL/\nu \approx 38{,}400$, which is past the steady regime: at this Reynolds number the flow is unsteady and the corner eddies oscillate, which is exactly what should be visible toward the end of the animation.
+The colour field is the speed magnitude $|\mathbf{u}| = \sqrt{u^2 + v^2}$ on a sequential dark-to-cyan colormap, with streamlines redrawn every frame so the recirculation pattern visibly evolves rather than snapping between static frames. The streamlines make the primary vortex centre and the secondary corner structures legible without obscuring the speed field underneath. The simulation is Stable Fluids at $Re = UL/\nu \approx 38{,}400$, which is past the steady regime: at this Reynolds number the flow is unsteady and the corner eddies oscillate, which is exactly what should be visible toward the end of the animation.
 
 ## SPH vs Stable Fluids (Static)
 
@@ -117,7 +117,7 @@ Plots/            Generated GIFs and PNGs
 ---
 
 <details>
-<summary><b>Theory</b> — click to expand the governing equations and per-solver derivations</summary>
+<summary><b>Theory</b></summary>
 
 <br>
 
@@ -159,7 +159,7 @@ and the gradient of the Spiky kernel is used for pressure forces because its non
 
 Pure Lagrangian methods handle free surfaces naturally but struggle with incompressibility; pure Eulerian methods enforce incompressibility cheaply but suffer advective diffusion. PIC/FLIP keeps particles as the primary representation but borrows the grid only for the projection step. The FLIP update transmits the *change* in grid velocity back to the particles,
 
-$$\mathbf{v}_p^{n+1} = \alpha\bigl(\mathbf{v}_p^n + \Delta\mathbf{v}_{\mathrm{grid}}\bigr) + (1-\alpha)\,\mathbf{v}_{\mathrm{grid}}^{n+1},$$
+$$v_p^{n+1} = \alpha (v_p^n + \Delta v_g) + (1 - \alpha)\, v_g^{n+1},$$
 
 so $\alpha = 0.95$ gives 95% FLIP (energetic, detail-preserving) blended with 5% PIC (damping, stabilising). The P2G scatter uses `np.add.at` for vectorised bilinear accumulation on a staggered MAC grid.
 
@@ -181,34 +181,16 @@ so $\alpha = 0.95$ gives 95% FLIP (energetic, detail-preserving) blended with 5%
 > [!WARNING]
 > **Numerical dissipation in Stable Fluids.** The semi-Lagrangian scheme is first-order accurate, so vortical structures decay visibly over long runs. The Kármán and lid-driven cavity scenes are tuned for a regime where this is not yet ruinous, but you should not trust quantitative shedding frequencies or vortex strengths past about 200 timesteps without comparing against a higher-order solver.
 
-> [!WARNING]
-> **SPH boundary handling is naïve.** The current SPH solver uses simple wall reflection rather than ghost particles or a boundary force model, so density and pressure spike near walls. This is visible in the static-comparison figure and is the reason the per-cell colour normalisation is needed there. Treat SPH near-wall fields as qualitative.
-
-> [!WARNING]
-> **Pressure solver is Gauss-Seidel.** Both grid solvers solve the pressure-Poisson equation by 20 Gauss-Seidel iterations, not a true multigrid or conjugate-gradient solve. Residual divergence at convergence is small but not machine-zero, which contributes to the slow decay seen in the lid-driven cavity at high Reynolds.
-
 > [!NOTE]
-> **2D only.** Everything is 2D. Real fluid instabilities (Rayleigh-Taylor, in particular) develop differently in 3D because vortex stretching exists; the 2D pictures here are correct for 2D physics but should not be over-interpreted as physical experiments.
-
-> [!NOTE]
-> **GIF size budget.** GitHub renders inline images up to 10 MB; larger files become download links. Most scenes are tuned to stay under that threshold. The Kármán scene runs at higher DPI and lands around 23 MB, so it shows as a download link rather than inline on github.com.
+> **GIF size budget.** GitHub renders inline images up to 10 MB; larger files become download links. Most scenes are tuned to stay under that threshold. The Kármán and lid-driven cavity scenes run at higher resolution and land around 12 to 17 MB, so they show as download links rather than inline on github.com.
 
 ## Next Steps
 
 > [!TIP]
-> **Higher-order advection.** Replace the first-order semi-Lagrangian advection in `StableFluidsSolver` with BFECC or MacCormack to recover the small-scale vorticity that currently decays. This is a self-contained change in the `_advect` method and would visibly sharpen all of the Eulerian scenes.
+> **Differentiable simulation via JAX.** Re-implementing the solvers in JAX would make every step differentiable end-to-end, which opens up gradient-based fluid control, inverse design of obstacles for a target wake, and learned closure models trained directly against the simulator.
 
-> [!TIP]
-> **Multigrid pressure solve.** Swap the Gauss-Seidel projection for a multigrid V-cycle. Convergence per timestep would jump by an order of magnitude, which would lift the practical Reynolds-number ceiling for the lid-driven cavity and tighten incompressibility everywhere.
+1. **Higher-order advection (BFECC).** Replace the first-order semi-Lagrangian advection in `StableFluidsSolver` with a Back and Forth Error Compensation and Correction step or MacCormack scheme. This is a self-contained change in the `_advect` method and would visibly sharpen all of the Eulerian scenes by recovering the small-scale vorticity that currently decays.
 
-> [!TIP]
-> **3D extension.** Promote the solvers to 3D. The Stable Fluids and PIC/FLIP code paths generalise cleanly; the bottleneck is the pressure solve, which is exactly why multigrid would be a prerequisite. Visualisation would shift from `imshow` to volume rendering or isosurfaces.
+2. **Multigrid pressure solve.** Swap the 20-iteration Gauss-Seidel projection for a multigrid V-cycle. Per-timestep convergence would jump by roughly an order of magnitude, which would lift the practical Reynolds-number ceiling for the lid-driven cavity and tighten the incompressibility constraint $\nabla \cdot \mathbf{u} = 0$ everywhere.
 
-> [!TIP]
-> **GPU acceleration via JAX or CuPy.** All three solvers are array-dominated, so a CuPy port should run essentially unchanged at 10 to 50× speed-ups. JAX would also enable differentiable simulation, which opens fluid-control and inverse-design experiments.
-
-> [!TIP]
-> **Surface tension and viscosity for SPH.** Add a Müller-style surface-tension term and a proper artificial-viscosity model. This would make SPH viable for scenes (droplets, splashes) where it currently underperforms PIC/FLIP.
-
-> [!TIP]
-> **Proper free-surface tracking.** Add a level-set or VOF surface tracker on top of the Stable Fluids solver so it can attempt the dam-break and Rayleigh-Taylor scenes without smearing the interface.
+3. **Surface tension and viscosity for SPH.** Add a Müller-style surface-tension term plus a proper artificial-viscosity model so the SPH solver can handle droplet and splash scenes where it currently underperforms PIC/FLIP.
