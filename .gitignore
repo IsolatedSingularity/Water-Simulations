@@ -26,8 +26,8 @@ Thumbs.db
 # Jenova agent system (symlinked, never push)
 Jenova/
 
-# Generated plot/animation outputs
-Plots/
+# Generated plot/animation outputs -- tracked intentionally for README gallery
+# Plots/
 
 # Local audit files
 audit/
