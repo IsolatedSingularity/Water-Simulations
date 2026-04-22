@@ -23,9 +23,13 @@ def saveAnimation(
     fps: int,
     outputPath: str,
     interval: int = 33,
+    dpi: int = 100,
 ) -> None:
     """
     Run a FuncAnimation and save it as a GIF.
+
+    The Pillow writer always quantizes to a 256-color palette for GIFs,
+    which keeps file sizes reasonable even for 300+ frame animations.
 
     Parameters
     ----------
@@ -34,7 +38,8 @@ def saveAnimation(
     frames:     total frame count.
     fps:        frames per second for output GIF.
     outputPath: destination file path (must end in .gif).
-    interval:   delay between frames in milliseconds (controls preview speed).
+    interval:   delay between frames in milliseconds (preview speed).
+    dpi:        rasterization DPI. Lower = smaller file. Default 100.
     """
     ensurePlotDir()
     anim = FuncAnimation(
@@ -46,6 +51,7 @@ def saveAnimation(
     )
     writer = PillowWriter(fps=fps)
     print(f"Saving {frames} frames -> {outputPath}")
-    anim.save(outputPath, writer=writer, dpi=120)
-    print(f"Saved: {outputPath}")
+    anim.save(outputPath, writer=writer, dpi=dpi)
+    sizeMB = os.path.getsize(outputPath) / (1024 * 1024)
+    print(f"Saved: {outputPath}  ({sizeMB:.1f} MB)")
     plt.close(fig)

@@ -20,7 +20,7 @@ from watersim.viz.animator import saveAnimation, ensurePlotDir, PLOT_DIR
 
 WIDTH = 192
 HEIGHT = 288
-FRAMES = 600
+FRAMES = 300
 FPS = 30
 OUTPUT = os.path.join(PLOT_DIR, "rayleigh_taylor.gif")
 
@@ -140,7 +140,7 @@ def runRayleighTaylor() -> None:
     scalar0 = _initScalar(WIDTH, HEIGHT)
     solver = _RTSolver(WIDTH, HEIGHT, scalar0)
 
-    fig, ax = plt.subplots(figsize=(4, 6))
+    fig, ax = plt.subplots(figsize=(3.4, 5.0))
     fig.subplots_adjust(left=0.04, right=0.96, top=0.92, bottom=0.04)
     addFooter(fig)
 
@@ -167,4 +167,4 @@ def runRayleighTaylor() -> None:
             print(f"  RT: frame {frame}/{FRAMES}")
         return [im]
 
-    saveAnimation(fig, update, FRAMES, FPS, OUTPUT)
+    saveAnimation(fig, update, FRAMES, FPS, OUTPUT, dpi=80)

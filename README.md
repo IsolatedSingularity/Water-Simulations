@@ -1,10 +1,10 @@
 # 2D Fluid Dynamics Lab
 
-![Kármán Vortex Street](Plots/vortex_street.gif)
-
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
+![Karman Vortex Street](Plots/vortex_street.gif)
 
 Compact 2D incompressible fluid simulation framework comparing three methods: Lagrangian SPH, Eulerian Stable Fluids, and Hybrid PIC/FLIP. All simulations run in pure NumPy + SciPy on a standard laptop.
 
@@ -12,40 +12,11 @@ Compact 2D incompressible fluid simulation framework comparing three methods: La
 
 ## Table of Contents
 
-1. [Methods](#methods)
-2. [Gallery](#gallery)
-3. [Installation](#installation)
-4. [Running Simulations](#running-simulations)
-5. [Project Structure](#project-structure)
-6. [Theory and References](#theory-and-references)
-
----
-
-## Methods
-
-### Stable Fluids (Eulerian)
-
-Grid-based solver. Unconditionally stable via semi-Lagrangian advection and pressure projection.
-
-$$\frac{\partial \mathbf{u}}{\partial t} + (\mathbf{u} \cdot \nabla)\mathbf{u} = -\frac{\nabla p}{\rho} + \nu \nabla^2 \mathbf{u} + \mathbf{f}, \quad \nabla \cdot \mathbf{u} = 0$$
-
-Used by: Kármán vortex street, swirl animation, Rayleigh-Taylor instability, lid-driven cavity, realtime interactive.
-
-### SPH (Lagrangian)
-
-Particle-based solver. Fluid properties estimated via weighted kernel sums over neighbors within radius $h$:
-
-$$\rho_i = \sum_j m_j W_{\text{poly6}}(|\mathbf{r}_i - \mathbf{r}_j|^2, h)$$
-
-Neighbor queries via `scipy.spatial.cKDTree` for $O(N \log N)$ scaling. Used by: static comparison.
-
-### PIC/FLIP (Hybrid)
-
-Particles carry velocity (no advective diffusion); grid enforces incompressibility. FLIP velocity update:
-
-$$\mathbf{v}_p^{n+1} = \alpha\left(\mathbf{v}_p^n + \Delta\mathbf{v}_{\text{grid}}\right) + (1-\alpha)\,\mathbf{v}_{\text{grid}}^{n+1}$$
-
-$\alpha = 0.95$. P2G transfer uses `np.add.at` for vectorized scatter-add. Used by: dam-break animation.
+1. [Gallery](#gallery)
+2. [Installation](#installation)
+3. [Running Simulations](#running-simulations)
+4. [Project Structure](#project-structure)
+5. [Theory and References](#theory-and-references)
 
 ---
 
@@ -53,7 +24,7 @@ $\alpha = 0.95$. P2G transfer uses `np.add.at` for vectorized scatter-add. Used 
 
 | Scene | Preview | Method |
 |---|---|---|
-| Kármán Vortex Street | ![vortex](Plots/vortex_street.gif) | Stable Fluids, cylinder obstacle |
+| Karman Vortex Street | ![vortex](Plots/vortex_street.gif) | Stable Fluids, cylinder obstacle |
 | Two-Source Swirl | ![swirl](Plots/saved_simulation.gif) | Stable Fluids, algorithmic sources |
 | PIC/FLIP Dam Break | ![dam](Plots/hybrid_simulation.gif) | PIC/FLIP hybrid, 192x96 basin |
 | Rayleigh-Taylor Instability | ![rt](Plots/rayleigh_taylor.gif) | Stable Fluids, buoyancy + passive scalar |
@@ -79,11 +50,11 @@ Python 3.11 or later required. No GPU, no compiled extensions.
 All scripts are thin entry points under `scripts/`. Run from the repo root:
 
 ```bash
-python -m scripts.runKarmanStreet      # Kármán vortex street (500 frames)
-python -m scripts.runSavedSwirl        # Two-source swirl (360 frames)
-python -m scripts.runPicFlipDamBreak   # PIC/FLIP dam break (500 frames)
-python -m scripts.runRayleighTaylor    # Rayleigh-Taylor instability (600 frames)
-python -m scripts.runLidDrivenCavity   # Lid-driven cavity (600 frames)
+python -m scripts.runKarmanStreet      # Karman vortex street (300 frames)
+python -m scripts.runSavedSwirl        # Two-source swirl (240 frames)
+python -m scripts.runPicFlipDamBreak   # PIC/FLIP dam break (320 frames)
+python -m scripts.runRayleighTaylor    # Rayleigh-Taylor instability (300 frames)
+python -m scripts.runLidDrivenCavity   # Lid-driven cavity (320 frames)
 python -m scripts.runStaticAnalysis    # SPH vs Stable Fluids comparison (PNG)
 python -m scripts.runRealtime          # Interactive Stable Fluids (mouse input)
 ```

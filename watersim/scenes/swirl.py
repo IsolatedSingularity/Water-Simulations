@@ -15,7 +15,7 @@ from watersim.viz.animator import saveAnimation, ensurePlotDir, PLOT_DIR
 
 
 GRID_SIZE = 128
-FRAMES = 360
+FRAMES = 240
 FPS = 30
 DENSITY_AMOUNT = 200.0
 FORCE_SCALE = 5.0
@@ -52,7 +52,7 @@ def runSwirl() -> None:
 
     solver = StableFluidsSolver(size=GRID_SIZE, visc=1e-6)
 
-    fig, ax = plt.subplots(figsize=(5, 5))
+    fig, ax = plt.subplots(figsize=(4.2, 4.2))
     fig.subplots_adjust(left=0.02, right=0.98, top=0.92, bottom=0.02)
     addFooter(fig)
 

@@ -22,7 +22,7 @@ from watersim.viz.animator import saveAnimation, ensurePlotDir, PLOT_DIR
 SIZE = 192
 LID_VELOCITY = 1.0
 VISCOSITY = 0.005
-FRAMES = 600
+FRAMES = 320
 FPS = 30
 OUTPUT = os.path.join(PLOT_DIR, "lid_driven_cavity.gif")
 
@@ -40,11 +40,11 @@ def runLidDrivenCavity() -> None:
         topWallVelocity=LID_VELOCITY,
     )
 
-    fig = plt.figure(figsize=(7, 4))
-    gs = GridSpec(1, 2, width_ratios=[1, 1], figure=fig, wspace=0.08)
+    fig = plt.figure(figsize=(6.2, 3.6))
+    gs = GridSpec(1, 2, width_ratios=[1, 1], figure=fig, wspace=0.06)
     axVort = fig.add_subplot(gs[0])
     axStream = fig.add_subplot(gs[1])
-    fig.subplots_adjust(top=0.88, bottom=0.06, left=0.04, right=0.96)
+    fig.subplots_adjust(top=0.86, bottom=0.06, left=0.04, right=0.96)
     addFooter(fig)
 
     vortCmap = PALETTES["vorticity"]

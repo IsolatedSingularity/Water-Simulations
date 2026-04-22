@@ -18,7 +18,7 @@ from watersim.viz.animator import saveAnimation, ensurePlotDir, PLOT_DIR
 GRID_WIDTH = 192
 GRID_HEIGHT = 96
 N_PER_ROW = 50
-FRAMES = 500
+FRAMES = 320
 FPS = 30
 OUTPUT = os.path.join(PLOT_DIR, "hybrid_simulation.gif")
 
@@ -34,8 +34,8 @@ def runDamBreak() -> None:
         nParticlesPerRow=N_PER_ROW,
     )
 
-    fig, ax = plt.subplots(figsize=(8, 4))
-    fig.subplots_adjust(left=0.04, right=0.96, top=0.88, bottom=0.08)
+    fig, ax = plt.subplots(figsize=(7, 3.6))
+    fig.subplots_adjust(left=0.03, right=0.97, top=0.88, bottom=0.06)
     addFooter(fig)
 
     pos = solver.getParticlePositions()
