@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "watersim"
+version = "0.1.0"
+description = "2D incompressible fluid simulations: SPH, Stable Fluids, PIC/FLIP."
+requires-python = ">=3.10"
+dependencies = [
+    "numpy==2.4.2",
+    "matplotlib==3.10.8",
+    "seaborn==0.13.2",
+    "Pillow==12.1.1",
+    "scipy==1.17.1",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test*.py"]
+python_functions = ["test*"]
