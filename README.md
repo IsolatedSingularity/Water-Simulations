@@ -58,7 +58,7 @@ A square cavity has a no-slip floor and side walls; the top wall slides at a con
 
 The colour field is the speed magnitude $|\mathbf{u}| = \sqrt{u^2 + v^2}$ on a sequential dark-to-cyan colormap, with streamlines redrawn every frame so the recirculation pattern visibly evolves rather than snapping between static frames. The streamlines make the primary vortex centre and the secondary corner structures legible without obscuring the speed field underneath. The simulation is Stable Fluids at $Re = UL/\nu \approx 38{,}400$, which is past the steady regime: at this Reynolds number the flow is unsteady and the corner eddies oscillate, which is exactly what should be visible toward the end of the animation.
 
-## SPH vs Stable Fluids (Static)
+## SPH vs Stable Fluids
 
 <p align="center">
   <img src="Plots/static_comparison.png" alt="SPH vs Stable Fluids" width="900">
