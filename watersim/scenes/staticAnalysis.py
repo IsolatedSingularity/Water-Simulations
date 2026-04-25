@@ -8,19 +8,23 @@ readable at gallery thumbnail size.
 """
 
 import os
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 from watersim.solvers.sph import SPHSolver
 from watersim.solvers.stableFluids import StableFluidsSolver
+from watersim.viz.animator import PLOT_DIR, ensurePlotDir
 from watersim.viz.theme import (
-    applyDarkTheme, addFooter, PALETTES, FG_PRIMARY, FG_SECONDARY,
+    FG_PRIMARY,
+    FG_SECONDARY,
+    PALETTES,
+    addFooter,
+    applyDarkTheme,
 )
-from watersim.viz.animator import ensurePlotDir, PLOT_DIR
-
 
 SIMULATION_STEPS = 300
-N_PER_ROW = 30   # ~1800 particles
+N_PER_ROW = 30  # ~1800 particles
 OUTPUT = os.path.join(PLOT_DIR, "static_comparison.png")
 FIELDS = ("density", "pressure", "divergence", "speed")
 FIELD_LABELS = ("Density", "Pressure", "Divergence", "Speed")
@@ -42,25 +46,31 @@ def runStaticAnalysis() -> None:
     # comparison shows non-trivial pressure / divergence / speed fields
     # instead of an empty grid.
     for _ in range(SIMULATION_STEPS):
-        sfSolver.uPrev[:, :] = -0.15        # downward (axis 0)
+        sfSolver.uPrev[:, :] = -0.15  # downward (axis 0)
         sfSolver.step()
     sfData = sfSolver.getGriddedData()
 
     nCols = len(FIELDS)
     fig, axes = plt.subplots(
-        2, nCols,
+        2,
+        nCols,
         figsize=(3.0 * nCols, 6.4),
         gridspec_kw={"hspace": 0.20, "wspace": 0.05},
     )
     fig.suptitle(
         "SPH vs Stable Fluids · 300 steps",
-        color=FG_PRIMARY, fontsize=14, y=0.99,
+        color=FG_PRIMARY,
+        fontsize=14,
+        y=0.99,
         fontweight="regular",
     )
     fig.text(
-        0.5, 0.94,
+        0.5,
+        0.94,
         "Lagrangian particles (top) vs Eulerian grid (bottom)",
-        ha="center", color=FG_SECONDARY, fontsize=9.5,
+        ha="center",
+        color=FG_SECONDARY,
+        fontsize=9.5,
     )
     addFooter(fig)
 
@@ -70,10 +80,14 @@ def runStaticAnalysis() -> None:
     for col, (field, label) in enumerate(zip(FIELDS, FIELD_LABELS)):
         cmap = PALETTES["diverging"] if field == "divergence" else PALETTES["sequential"]
         axes[0, col].text(
-            0.5, 1.04, label,
+            0.5,
+            1.04,
+            label,
             transform=axes[0, col].transAxes,
-            ha="center", va="bottom",
-            color=FG_PRIMARY, fontsize=11,
+            ha="center",
+            va="bottom",
+            color=FG_PRIMARY,
+            fontsize=11,
         )
         for row, data in enumerate(dataSets):
             ax = axes[row, col]
@@ -84,18 +98,26 @@ def runStaticAnalysis() -> None:
             else:
                 vmin, vmax = 0.0, max(vAbs, 1e-6)
             ax.imshow(
-                arr, origin="lower",
-                cmap=cmap, vmin=vmin, vmax=vmax,
+                arr,
+                origin="lower",
+                cmap=cmap,
+                vmin=vmin,
+                vmax=vmax,
                 interpolation="bilinear",
             )
             ax.axis("off")
 
     for row, label in enumerate(rowLabels):
         axes[row, 0].text(
-            -0.04, 0.5, label,
+            -0.04,
+            0.5,
+            label,
             transform=axes[row, 0].transAxes,
-            ha="right", va="center",
-            color=FG_SECONDARY, fontsize=11, rotation=90,
+            ha="right",
+            va="center",
+            color=FG_SECONDARY,
+            fontsize=11,
+            rotation=90,
         )
 
     fig.subplots_adjust(left=0.05, right=0.99, top=0.84, bottom=0.04)

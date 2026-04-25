@@ -1,7 +1,6 @@
 """Streamline and quiver overlays for Eulerian velocity fields."""
 
 import numpy as np
-import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 
 

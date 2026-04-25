@@ -1,16 +1,15 @@
 """Smoke tests for solver correctness: SPH mass conservation, SF step health."""
 
 import numpy as np
-import pytest
 
+from watersim.solvers.picFlip import HybridSolver
 from watersim.solvers.sph import SPHSolver
 from watersim.solvers.stableFluids import StableFluidsSolver
-from watersim.solvers.picFlip import HybridSolver
-
 
 # ---------------------------------------------------------------------------
 # SPH
 # ---------------------------------------------------------------------------
+
 
 def testSPHParticleCountPreserved() -> None:
     """SPH does not lose or gain particles over 5 steps."""
@@ -52,6 +51,7 @@ def testSPHGriddedDataKeys() -> None:
 # Stable Fluids
 # ---------------------------------------------------------------------------
 
+
 def testStableFluidsStepRunsWithoutError() -> None:
     """StableFluidsSolver.step() completes 5 steps without raising."""
     solver = StableFluidsSolver(size=32)
@@ -74,8 +74,7 @@ def testStableFluidsDivergenceNearZero() -> None:
     solver.u[8:24, 8:24] = 1.0
     solver.step()
     div = solver.getDivergence()
-    assert float(np.max(np.abs(div[1:-1, 1:-1]))) < 0.5, \
-        "Divergence too large after projection."
+    assert float(np.max(np.abs(div[1:-1, 1:-1]))) < 0.5, "Divergence too large after projection."
 
 
 def testStableFluidsVorticityShape() -> None:
@@ -88,6 +87,7 @@ def testStableFluidsVorticityShape() -> None:
 # ---------------------------------------------------------------------------
 # HybridSolver (PIC/FLIP)
 # ---------------------------------------------------------------------------
+
 
 def testHybridParticleCountPreserved() -> None:
     """PIC/FLIP does not change particle count over 5 steps."""

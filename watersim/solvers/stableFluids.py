@@ -107,11 +107,7 @@ class StableFluidsSolver(Solver):
         cInv = 1.0 / c
         for _ in range(iters):
             x[1:-1, 1:-1] = (
-                x0[1:-1, 1:-1]
-                + a * (
-                    x[:-2, 1:-1] + x[2:, 1:-1]
-                    + x[1:-1, :-2] + x[1:-1, 2:]
-                )
+                x0[1:-1, 1:-1] + a * (x[:-2, 1:-1] + x[2:, 1:-1] + x[1:-1, :-2] + x[1:-1, 2:])
             ) * cInv
             self._setBoundaries(b, x)
 
@@ -145,9 +141,8 @@ class StableFluidsSolver(Solver):
         t1 = y - j0
         t0 = 1.0 - t1
 
-        d[1:-1, 1:-1] = (
-            s0 * (t0 * d0[i0, j0] + t1 * d0[i0, j1])
-            + s1 * (t0 * d0[i1, j0] + t1 * d0[i1, j1])
+        d[1:-1, 1:-1] = s0 * (t0 * d0[i0, j0] + t1 * d0[i0, j1]) + s1 * (
+            t0 * d0[i1, j0] + t1 * d0[i1, j1]
         )
         self._setBoundaries(b, d)
 
@@ -158,9 +153,8 @@ class StableFluidsSolver(Solver):
         p = np.zeros((n, n), dtype=np.float64)
         div = np.zeros((n, n), dtype=np.float64)
 
-        div[1:-1, 1:-1] = -0.5 * h * (
-            self.u[2:, 1:-1] - self.u[:-2, 1:-1]
-            + self.v[1:-1, 2:] - self.v[1:-1, :-2]
+        div[1:-1, 1:-1] = (
+            -0.5 * h * (self.u[2:, 1:-1] - self.u[:-2, 1:-1] + self.v[1:-1, 2:] - self.v[1:-1, :-2])
         )
         self._setBoundaries(0, div)
         self._setBoundaries(0, p)
@@ -225,26 +219,24 @@ class StableFluidsSolver(Solver):
     def getVorticity(self) -> np.ndarray:
         """Return curl field: dv/dx - du/dy, shape (size, size)."""
         vort = np.zeros_like(self.u)
-        vort[1:-1, 1:-1] = (
-            (self.v[1:-1, 2:] - self.v[1:-1, :-2]) * 0.5
-            - (self.u[2:, 1:-1] - self.u[:-2, 1:-1]) * 0.5
-        )
+        vort[1:-1, 1:-1] = (self.v[1:-1, 2:] - self.v[1:-1, :-2]) * 0.5 - (
+            self.u[2:, 1:-1] - self.u[:-2, 1:-1]
+        ) * 0.5
         return vort
 
     def getDivergence(self) -> np.ndarray:
         """Return divergence of velocity field, shape (size, size)."""
         div = np.zeros_like(self.u)
-        div[1:-1, 1:-1] = (
-            (self.u[2:, 1:-1] - self.u[:-2, 1:-1]) * 0.5
-            + (self.v[1:-1, 2:] - self.v[1:-1, :-2]) * 0.5
-        )
+        div[1:-1, 1:-1] = (self.u[2:, 1:-1] - self.u[:-2, 1:-1]) * 0.5 + (
+            self.v[1:-1, 2:] - self.v[1:-1, :-2]
+        ) * 0.5
         return div
 
     def getGriddedData(self) -> dict[str, np.ndarray]:
         """Return dict of density, pressure proxy, divergence, speed."""
         pressure = np.zeros_like(self.density)
         self._linearSolve(0, pressure, self.getDivergence(), 1.0, 4.0, iters=5)
-        speed = np.sqrt(self.u ** 2 + self.v ** 2)
+        speed = np.sqrt(self.u**2 + self.v**2)
         return {
             "density": self.density.copy(),
             "pressure": pressure,

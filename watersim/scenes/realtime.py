@@ -5,20 +5,19 @@ Click/drag to add density and force. Press 'v' to toggle vorticity view.
 Dark theme applied. Imports solver from watersim.solvers.stableFluids.
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.animation import FuncAnimation
 
 from watersim.solvers.stableFluids import StableFluidsSolver
-from watersim.viz.theme import applyDarkTheme, addFooter, PALETTES
-
+from watersim.viz.theme import PALETTES, addFooter, applyDarkTheme
 
 GRID_SIZE = 128
 DT = 0.1
 VISCOSITY = 1e-6
 FORCE_AMOUNT = 5.0
 DENSITY_AMOUNT = 100.0
-ANIMATION_INTERVAL = 1   # ms
+ANIMATION_INTERVAL = 1  # ms
 
 
 class FluidAnimation:
@@ -82,7 +81,7 @@ class FluidAnimation:
         r = self.BRUSH_RADIUS
         for di in range(-r, r + 1):
             for dj in range(-r, r + 1):
-                if di ** 2 + dj ** 2 <= r ** 2:
+                if di**2 + dj**2 <= r**2:
                     xi = int(np.clip(x + di, 0, n - 1))
                     yj = int(np.clip(y + dj, 0, n - 1))
                     self.solver.densityPrev[xi, yj] += DENSITY_AMOUNT

@@ -1,11 +1,11 @@
 """Shared FuncAnimation wrapper with progress reporting and GIF saving."""
 
 import os
+from typing import Callable
+
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, PillowWriter
 from matplotlib.figure import Figure
-from typing import Callable
-
 
 PLOT_DIR = "Plots"
 

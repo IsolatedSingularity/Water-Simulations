@@ -1,7 +1,6 @@
 """Abstract base class for all fluid solvers."""
 
 from abc import ABC, abstractmethod
-import numpy as np
 
 
 class Solver(ABC):

@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=68"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "watersim"
@@ -14,6 +14,10 @@ dependencies = [
     "Pillow==12.1.1",
     "scipy==1.17.1",
 ]
+
+[tool.setuptools.packages.find]
+include = ["watersim*"]
+exclude = ["tests*", "docs*", "scripts*", "Plots*"]
 
 [tool.ruff]
 line-length = 100

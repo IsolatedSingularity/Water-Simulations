@@ -17,7 +17,7 @@ def poly6Kernel(rSq: np.ndarray, h: float) -> np.ndarray:
     Kernel weights, shape (N,). Zero outside support.
     """
     hSq = h * h
-    coeff = 315.0 / (64.0 * np.pi * h ** 9)
+    coeff = 315.0 / (64.0 * np.pi * h**9)
     mask = rSq < hSq
     result = np.zeros_like(rSq)
     result[mask] = coeff * (hSq - rSq[mask]) ** 3
@@ -38,7 +38,7 @@ def spikyGradKernel(rVec: np.ndarray, r: np.ndarray, h: float) -> np.ndarray:
     -------
     Gradient vectors, shape (N, 2). Zero outside support or at r=0.
     """
-    coeff = -45.0 / (np.pi * h ** 6)
+    coeff = -45.0 / (np.pi * h**6)
     mask = (r > 1e-9) & (r < h)
     result = np.zeros_like(rVec)
     if np.any(mask):
@@ -61,7 +61,7 @@ def viscLaplacianKernel(r: np.ndarray, h: float) -> np.ndarray:
     -------
     Scalar Laplacian weights, shape (N,). Zero outside support.
     """
-    coeff = 45.0 / (np.pi * h ** 6)
+    coeff = 45.0 / (np.pi * h**6)
     mask = r < h
     result = np.zeros_like(r)
     result[mask] = coeff * (h - r[mask])

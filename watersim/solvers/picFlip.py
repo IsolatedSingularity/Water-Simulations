@@ -18,7 +18,7 @@ class HybridSolver(Solver):
     Particles start as a dam block on the left 30% x 70% of the domain.
     """
 
-    FLIP_ALPHA: float = 0.95   # 1 = pure FLIP, 0 = pure PIC
+    FLIP_ALPHA: float = 0.95  # 1 = pure FLIP, 0 = pure PIC
     DT: float = 0.04
     GRAVITY: np.ndarray = np.array([0.0, -9.8 * 2.0])
 
@@ -47,9 +47,7 @@ class HybridSolver(Solver):
         xs = np.linspace(2.0, gridWidth * 0.30, colCount)
         ys = np.linspace(2.0, gridHeight * 0.70, rowCount)
         xGrid, yGrid = np.meshgrid(xs, ys)
-        self.pos: np.ndarray = np.column_stack(
-            [xGrid.ravel(), yGrid.ravel()]
-        ).astype(np.float64)
+        self.pos: np.ndarray = np.column_stack([xGrid.ravel(), yGrid.ravel()]).astype(np.float64)
         self.vel: np.ndarray = np.zeros((self.pos.shape[0], 2), dtype=np.float64)
         self.nParticles: int = self.pos.shape[0]
 
@@ -141,15 +139,15 @@ class HybridSolver(Solver):
         div = np.zeros_like(p)
 
         div[1:-1, 1:-1] = (
-            self.gridU[1:-1, 2:] - self.gridU[1:-1, 1:-1]
-            + self.gridV[2:, 1:-1] - self.gridV[1:-1, 1:-1]
+            self.gridU[1:-1, 2:]
+            - self.gridU[1:-1, 1:-1]
+            + self.gridV[2:, 1:-1]
+            - self.gridV[1:-1, 1:-1]
         )
 
         for _ in range(80):
             p[1:-1, 1:-1] = (
-                div[1:-1, 1:-1]
-                + p[1:-1, 2:] + p[1:-1, :-2]
-                + p[2:, 1:-1] + p[:-2, 1:-1]
+                div[1:-1, 1:-1] + p[1:-1, 2:] + p[1:-1, :-2] + p[2:, 1:-1] + p[:-2, 1:-1]
             ) / 4.0
             p[0, :] = p[1, :]
             p[-1, :] = p[-2, :]

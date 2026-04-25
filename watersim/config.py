@@ -1,6 +1,6 @@
 """Dataclass-based scene configuration objects."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass

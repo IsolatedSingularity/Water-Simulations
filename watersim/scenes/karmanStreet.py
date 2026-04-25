@@ -12,19 +12,19 @@ periodic Karman vortex street.
 """
 
 import os
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 from watersim.solvers.stableFluids import StableFluidsSolver
+from watersim.viz.animator import PLOT_DIR, ensurePlotDir, saveAnimation
 from watersim.viz.theme import (
-    applyDarkTheme,
-    addFooter,
-    PALETTES,
     FG_PRIMARY,
     FG_SECONDARY,
+    PALETTES,
+    addFooter,
+    applyDarkTheme,
 )
-from watersim.viz.animator import saveAnimation, ensurePlotDir, PLOT_DIR
-
 
 # Scene parameters tuned for visible periodic shedding
 SIZE = 256
@@ -33,7 +33,7 @@ DYE_AMOUNT = 80.0
 VISCOSITY = 5e-4
 DT = 0.02
 SUBSTEPS = 4
-OBSTACLE_RADIUS = 16          # diameter D = 32 cells (visible from a distance)
+OBSTACLE_RADIUS = 16  # diameter D = 32 cells (visible from a distance)
 OBSTACLE_X = SIZE // 4
 
 # Display crop: tight band around cylinder for wind-tunnel aspect
@@ -66,7 +66,7 @@ def _buildObstacleMask(size: int) -> np.ndarray:
     cy = size // 2
     ys = np.arange(size)[:, np.newaxis]
     xs = np.arange(size)[np.newaxis, :]
-    return (xs - cx) ** 2 + (ys - cy) ** 2 < OBSTACLE_RADIUS ** 2
+    return (xs - cx) ** 2 + (ys - cy) ** 2 < OBSTACLE_RADIUS**2
 
 
 def runKarmanStreet() -> None:
@@ -76,7 +76,11 @@ def runKarmanStreet() -> None:
 
     obstacle = _buildObstacleMask(SIZE)
     solver = _WindTunnelSolver(
-        size=SIZE, dt=DT, diff=0.0, visc=VISCOSITY, obstacleMask=obstacle,
+        size=SIZE,
+        dt=DT,
+        diff=0.0,
+        visc=VISCOSITY,
+        obstacleMask=obstacle,
     )
     solver.v[:] = INFLOW_VELOCITY
     solver.v[obstacle] = 0.0
@@ -94,7 +98,8 @@ def runKarmanStreet() -> None:
         initial,
         origin="lower",
         cmap=PALETTES["vorticity"],
-        vmin=-1.0, vmax=1.0,
+        vmin=-1.0,
+        vmax=1.0,
         aspect="equal",
         interpolation="bilinear",
         extent=(0, SIZE, 0, CROP_HEIGHT),
@@ -103,19 +108,30 @@ def runKarmanStreet() -> None:
     cyl = plt.Circle(
         (OBSTACLE_X, CROP_HEIGHT // 2),
         OBSTACLE_RADIUS,
-        facecolor="#16161e", edgecolor=FG_SECONDARY, lw=1.2, zorder=5,
+        facecolor="#16161e",
+        edgecolor=FG_SECONDARY,
+        lw=1.2,
+        zorder=5,
     )
     ax.add_patch(cyl)
 
     ax.set_title(
         "Kármán Vortex Street",
-        color=FG_PRIMARY, fontsize=14, pad=8, loc="left", x=0.02,
+        color=FG_PRIMARY,
+        fontsize=14,
+        pad=8,
+        loc="left",
+        x=0.02,
     )
     ax.text(
-        0.98, 1.02,
+        0.98,
+        1.02,
         f"Stable Fluids · 192² grid · D = {2 * OBSTACLE_RADIUS} cells",
         transform=ax.transAxes,
-        color=FG_SECONDARY, fontsize=9, ha="right", va="bottom",
+        color=FG_SECONDARY,
+        fontsize=9,
+        ha="right",
+        va="bottom",
     )
     ax.set_xlim(0, SIZE)
     ax.set_ylim(0, CROP_HEIGHT)
@@ -131,13 +147,10 @@ def runKarmanStreet() -> None:
             solver.densityPrev[midLo:midHi, 1:3] = DYE_AMOUNT
             globalStep = frame * SUBSTEPS + sub
             rampIn = min(1.0, globalStep / 40.0)
-            kickStrength = (
-                rampIn * 0.9 * INFLOW_VELOCITY * np.sin(0.06 * globalStep)
-            )
+            kickStrength = rampIn * 0.9 * INFLOW_VELOCITY * np.sin(0.06 * globalStep)
             solver.uPrev[
                 SIZE // 2,
-                OBSTACLE_X + OBSTACLE_RADIUS + 1
-                : OBSTACLE_X + OBSTACLE_RADIUS + 4,
+                OBSTACLE_X + OBSTACLE_RADIUS + 1 : OBSTACLE_X + OBSTACLE_RADIUS + 4,
             ] += kickStrength
             solver.step()
 

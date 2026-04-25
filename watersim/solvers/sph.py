@@ -39,9 +39,7 @@ class SPHSolver(Solver):
         xs = np.linspace(0.1, 0.4, nParticlesPerRow)
         ys = np.linspace(0.1, 0.9, nParticlesPerRow)
         xGrid, yGrid = np.meshgrid(xs, ys)
-        self.pos: np.ndarray = np.column_stack(
-            [xGrid.ravel(), yGrid.ravel()]
-        ).astype(np.float64)
+        self.pos: np.ndarray = np.column_stack([xGrid.ravel(), yGrid.ravel()]).astype(np.float64)
         self.vel: np.ndarray = np.zeros((nParticles, 2), dtype=np.float64)
         self.acc: np.ndarray = np.zeros((nParticles, 2), dtype=np.float64)
         self.rho: np.ndarray = np.zeros(nParticles, dtype=np.float64)
@@ -60,14 +58,12 @@ class SPHSolver(Solver):
 
         self.rho[:] = 0.0
         # self-contribution
-        self.rho += self.PARTICLE_MASS * poly6Kernel(
-            np.zeros(self.nParticles), self.h
-        )
+        self.rho += self.PARTICLE_MASS * poly6Kernel(np.zeros(self.nParticles), self.h)
 
         if pairs.shape[0] > 0:
             i, j = pairs[:, 0], pairs[:, 1]
             diff = self.pos[i] - self.pos[j]
-            rSq = np.sum(diff ** 2, axis=1)
+            rSq = np.sum(diff**2, axis=1)
             w = self.PARTICLE_MASS * poly6Kernel(rSq, self.h)
             np.add.at(self.rho, i, w)
             np.add.at(self.rho, j, w)
@@ -98,14 +94,12 @@ class SPHSolver(Solver):
                     + self.pressure[j[validRho]] / self.rho[j[validRho]]
                 ) * 0.5
                 gradW = spikyGradKernel(diff[validRho], r[validRho], self.h)
-                pressForce = (
-                    -self.PARTICLE_MASS * avgPressure[:, np.newaxis] * gradW
-                )
+                pressForce = -self.PARTICLE_MASS * avgPressure[:, np.newaxis] * gradW
                 np.add.at(forces, i[validRho], pressForce)
                 np.add.at(forces, j[validRho], -pressForce)
 
             # Viscosity force
-            validVisc = (self.rho[j] > 1e-9)
+            validVisc = self.rho[j] > 1e-9
             if np.any(validVisc):
                 lapW = viscLaplacianKernel(r[validVisc], self.h)
                 velDiff = self.vel[j[validVisc]] - self.vel[i[validVisc]]
@@ -154,7 +148,6 @@ class SPHSolver(Solver):
         Dict with keys 'density', 'pressure', 'divergence', 'speed'.
         """
         gs = self.GRID_SIZE
-        grid = np.linspace(0, 1, gs)
 
         fields: dict[str, np.ndarray] = {
             k: np.zeros((gs, gs)) for k in ("density", "pressure", "divergence", "speed")
@@ -166,8 +159,7 @@ class SPHSolver(Solver):
 
         np.add.at(fields["density"], (iy, ix), self.rho)
         np.add.at(fields["pressure"], (iy, ix), self.pressure)
-        np.add.at(fields["speed"], (iy, ix),
-                  np.linalg.norm(self.vel, axis=1))
+        np.add.at(fields["speed"], (iy, ix), np.linalg.norm(self.vel, axis=1))
         np.add.at(counts, (iy, ix), 1)
 
         mask = counts > 0
@@ -182,8 +174,7 @@ class SPHSolver(Solver):
         uGrid[mask] /= counts[mask]
         vGrid[mask] /= counts[mask]
         fields["divergence"][1:-1, 1:-1] = (
-            uGrid[1:-1, 2:] - uGrid[1:-1, :-2]
-            + vGrid[2:, 1:-1] - vGrid[:-2, 1:-1]
+            uGrid[1:-1, 2:] - uGrid[1:-1, :-2] + vGrid[2:, 1:-1] - vGrid[:-2, 1:-1]
         ) * 0.5
 
         return fields

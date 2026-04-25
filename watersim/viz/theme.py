@@ -7,25 +7,25 @@ scenes so the gallery reads as one coherent set of plots rather than six
 unrelated screenshots.
 """
 
-import matplotlib.pyplot as plt
-from matplotlib.colors import Colormap, LinearSegmentedColormap
 from typing import Any
 
+import matplotlib.pyplot as plt
+from matplotlib.colors import Colormap, LinearSegmentedColormap
 
 # ---------------------------------------------------------------------------
 # Palette constants
 # ---------------------------------------------------------------------------
 
 # Base surfaces (two-toned, like a VS Code editor inside a darker shell)
-BG_FIGURE = "#16161e"      # outer frame  (storm bg)
-BG_AXES = "#1a1b26"        # axes panel   (slightly lighter)
-BG_PANEL = "#24283b"       # accent panel
-GRID_LINE = "#2e3346"      # subtle gridlines / spines
+BG_FIGURE = "#16161e"  # outer frame  (storm bg)
+BG_AXES = "#1a1b26"  # axes panel   (slightly lighter)
+BG_PANEL = "#24283b"  # accent panel
+GRID_LINE = "#2e3346"  # subtle gridlines / spines
 
 # Foreground typography
-FG_PRIMARY = "#c0caf5"     # soft lavender-white (titles, body)
-FG_SECONDARY = "#9aa5ce"   # muted lavender (subtitles, axis labels)
-FG_TERTIARY = "#565f89"    # comment grey  (footer, annotations)
+FG_PRIMARY = "#c0caf5"  # soft lavender-white (titles, body)
+FG_SECONDARY = "#9aa5ce"  # muted lavender (subtitles, axis labels)
+FG_TERTIARY = "#565f89"  # comment grey  (footer, annotations)
 
 # Accents (Tokyo Night Storm)
 ACCENT_BLUE = "#7aa2f7"
@@ -123,10 +123,10 @@ def _makeFluidSplit() -> Colormap:
     return LinearSegmentedColormap.from_list(
         "tnFluidSplit",
         [
-            (0.00, ACCENT_CYAN),       # light fluid (bottom in image)
+            (0.00, ACCENT_CYAN),  # light fluid (bottom in image)
             (0.45, "#4f8ab0"),
             (0.55, "#a8704a"),
-            (1.00, ACCENT_MAGENTA),    # heavy fluid (top)
+            (1.00, ACCENT_MAGENTA),  # heavy fluid (top)
         ],
         N=256,
     )

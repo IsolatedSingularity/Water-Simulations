@@ -8,17 +8,21 @@ GIF, with a faint motion-blur trail behind each particle.
 """
 
 import os
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.colors import LogNorm
 
 from watersim.solvers.picFlip import HybridSolver
+from watersim.viz.animator import PLOT_DIR, ensurePlotDir, saveAnimation
 from watersim.viz.theme import (
-    applyDarkTheme, addFooter, PALETTES,
-    FG_PRIMARY, FG_SECONDARY, ACCENT_BLUE,
+    ACCENT_BLUE,
+    FG_PRIMARY,
+    FG_SECONDARY,
+    PALETTES,
+    addFooter,
+    applyDarkTheme,
 )
-from watersim.viz.animator import saveAnimation, ensurePlotDir, PLOT_DIR
-
 
 GRID_WIDTH = 192
 GRID_HEIGHT = 96
@@ -47,7 +51,8 @@ def runDamBreak() -> None:
     speeds = solver.getParticleSpeeds() + 1.0
 
     sc = ax.scatter(
-        pos[:, 0], pos[:, 1],
+        pos[:, 0],
+        pos[:, 1],
         c=speeds,
         cmap=PALETTES["particle"],
         s=6.0,
@@ -59,13 +64,21 @@ def runDamBreak() -> None:
     ax.set_ylim(0, GRID_HEIGHT)
     ax.set_title(
         "PIC/FLIP Dam Break",
-        color=FG_PRIMARY, fontsize=14, pad=8, loc="left", x=0.02,
+        color=FG_PRIMARY,
+        fontsize=14,
+        pad=8,
+        loc="left",
+        x=0.02,
     )
     ax.text(
-        0.98, 1.02,
+        0.98,
+        1.02,
         "Hybrid solver · 192 × 96 basin · α = 0.95",
         transform=ax.transAxes,
-        color=FG_SECONDARY, fontsize=9, ha="right", va="bottom",
+        color=FG_SECONDARY,
+        fontsize=9,
+        ha="right",
+        va="bottom",
     )
     ax.axis("off")
 
@@ -98,9 +111,13 @@ def runDamBreak() -> None:
         for ti, tPos in enumerate(trail[:-1]):
             alpha = 0.07 * (ti + 1)
             ts = ax.scatter(
-                tPos[:, 0], tPos[:, 1],
-                c=ACCENT_BLUE, s=4.0,
-                linewidths=0, alpha=alpha, zorder=2,
+                tPos[:, 0],
+                tPos[:, 1],
+                c=ACCENT_BLUE,
+                s=4.0,
+                linewidths=0,
+                alpha=alpha,
+                zorder=2,
             )
             trailScatters.append(ts)
 

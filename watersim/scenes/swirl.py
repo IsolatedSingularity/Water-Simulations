@@ -7,15 +7,19 @@ so the eye sees the streak picture first, then the underlying rotation field.
 """
 
 import os
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 from watersim.solvers.stableFluids import StableFluidsSolver
+from watersim.viz.animator import PLOT_DIR, ensurePlotDir, saveAnimation
 from watersim.viz.theme import (
-    applyDarkTheme, addFooter, PALETTES, FG_PRIMARY, FG_SECONDARY,
+    FG_PRIMARY,
+    FG_SECONDARY,
+    PALETTES,
+    addFooter,
+    applyDarkTheme,
 )
-from watersim.viz.animator import saveAnimation, ensurePlotDir, PLOT_DIR
-
 
 GRID_SIZE = 192
 FRAMES = 130
@@ -30,12 +34,16 @@ VORT_START_FRAC = 0.65
 
 def _addFluidAtPos(
     solver: StableFluidsSolver,
-    x: float, y: float, dx: float, dy: float, radius: int = 4,
+    x: float,
+    y: float,
+    dx: float,
+    dy: float,
+    radius: int = 4,
 ) -> None:
     n = solver.size
     for di in range(-radius, radius + 1):
         for dj in range(-radius, radius + 1):
-            if di ** 2 + dj ** 2 <= radius ** 2:
+            if di**2 + dj**2 <= radius**2:
                 xi = int(np.clip(x + di, 0, n - 1))
                 yj = int(np.clip(y + dj, 0, n - 1))
                 solver.densityPrev[xi, yj] += DENSITY_AMOUNT
@@ -58,18 +66,27 @@ def runSwirl() -> None:
         solver.density,
         origin="lower",
         cmap=PALETTES["sequential"],
-        vmin=0, vmax=1,
+        vmin=0,
+        vmax=1,
         interpolation="bilinear",
     )
     ax.set_title(
         "Two-Source Swirl",
-        color=FG_PRIMARY, fontsize=14, pad=18, loc="left", x=0.02,
+        color=FG_PRIMARY,
+        fontsize=14,
+        pad=18,
+        loc="left",
+        x=0.02,
     )
     ax.text(
-        0.02, 0.985,
+        0.02,
+        0.985,
         "Stable Fluids · counter-rotating dye sources",
         transform=ax.transAxes,
-        color=FG_SECONDARY, fontsize=9, ha="left", va="bottom",
+        color=FG_SECONDARY,
+        fontsize=9,
+        ha="left",
+        va="bottom",
     )
     ax.axis("off")
 
@@ -77,7 +94,9 @@ def runSwirl() -> None:
         np.zeros((GRID_SIZE, GRID_SIZE)),
         origin="lower",
         cmap=PALETTES["vorticity"],
-        alpha=0.0, vmin=-1, vmax=1,
+        alpha=0.0,
+        vmin=-1,
+        vmax=1,
         interpolation="bilinear",
         zorder=4,
     )

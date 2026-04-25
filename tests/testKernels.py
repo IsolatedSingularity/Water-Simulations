@@ -9,7 +9,7 @@ from watersim.solvers.kernels import poly6Kernel, spikyGradKernel, viscLaplacian
 def testPoly6NonNegative() -> None:
     """poly6Kernel returns non-negative values for all inputs."""
     h = 1.0
-    rSq = np.linspace(0, h ** 2 + 0.1, 50)
+    rSq = np.linspace(0, h**2 + 0.1, 50)
     result = poly6Kernel(rSq, h)
     assert np.all(result >= 0.0), "poly6Kernel produced negative values."
 
@@ -17,7 +17,7 @@ def testPoly6NonNegative() -> None:
 def testPoly6ZeroOutsideSupport() -> None:
     """poly6Kernel is exactly zero when rSq >= h^2."""
     h = 0.8
-    rSq = np.array([h ** 2, h ** 2 + 0.01, 2.0])
+    rSq = np.array([h**2, h**2 + 0.01, 2.0])
     result = poly6Kernel(rSq, h)
     assert np.all(result == 0.0), "poly6Kernel nonzero outside support."
 
@@ -25,10 +25,9 @@ def testPoly6ZeroOutsideSupport() -> None:
 def testPoly6MaxAtOrigin() -> None:
     """poly6Kernel is maximized at r=0."""
     h = 0.8
-    rSqVals = np.array([0.0, 0.1, 0.3, 0.5, h ** 2 - 1e-6])
+    rSqVals = np.array([0.0, 0.1, 0.3, 0.5, h**2 - 1e-6])
     vals = poly6Kernel(rSqVals, h)
-    assert vals[0] == pytest.approx(max(vals), rel=1e-6), \
-        "poly6Kernel not maximized at origin."
+    assert vals[0] == pytest.approx(max(vals), rel=1e-6), "poly6Kernel not maximized at origin."
 
 
 def testSpikyGradZeroAtOrigin() -> None:
@@ -37,8 +36,7 @@ def testSpikyGradZeroAtOrigin() -> None:
     rVec = np.array([[0.0, 0.0]])
     r = np.array([0.0])
     result = spikyGradKernel(rVec, r, h)
-    assert np.allclose(result, 0.0), \
-        "spikyGradKernel nonzero at r=0."
+    assert np.allclose(result, 0.0), "spikyGradKernel nonzero at r=0."
 
 
 def testSpikyGradZeroOutsideSupport() -> None:
@@ -47,8 +45,7 @@ def testSpikyGradZeroOutsideSupport() -> None:
     rVec = np.array([[h + 0.01, 0.0], [1.0, 1.0]])
     r = np.linalg.norm(rVec, axis=1)
     result = spikyGradKernel(rVec, r, h)
-    assert np.allclose(result, 0.0), \
-        "spikyGradKernel nonzero outside support."
+    assert np.allclose(result, 0.0), "spikyGradKernel nonzero outside support."
 
 
 def testViscLaplacianNonNegative() -> None:
