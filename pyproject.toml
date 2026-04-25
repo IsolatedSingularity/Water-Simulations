@@ -8,11 +8,11 @@ version = "0.1.0"
 description = "2D incompressible fluid simulations: SPH, Stable Fluids, PIC/FLIP."
 requires-python = ">=3.10"
 dependencies = [
-    "numpy==2.4.2",
-    "matplotlib==3.10.8",
-    "seaborn==0.13.2",
-    "Pillow==12.1.1",
-    "scipy==1.17.1",
+    "numpy>=1.26",
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+    "Pillow>=10.0",
+    "scipy>=1.11",
 ]
 
 [tool.setuptools.packages.find]
